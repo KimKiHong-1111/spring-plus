@@ -7,8 +7,10 @@ import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResultDto;
 import org.example.expert.domain.todo.service.TodoService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,12 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/todos")
 public class TodoController {
 
     private final TodoService todoService;
 
-    @PostMapping("/todos")
+    @PostMapping
     public ResponseEntity<TodoSaveResponse> saveTodo(
             @Auth AuthUser authUser,
             @Valid @RequestBody TodoSaveRequest todoSaveRequest
@@ -29,7 +32,7 @@ public class TodoController {
         return ResponseEntity.ok(todoService.saveTodo(authUser, todoSaveRequest));
     }
 
-    @GetMapping("/todos")
+    @GetMapping
     public ResponseEntity<Page<TodoResponse>> getTodos(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -41,8 +44,20 @@ public class TodoController {
         return ResponseEntity.ok(todoService.getTodos(page, size, weather, startAt,endAt));
     }
 
-    @GetMapping("/todos/{todoId}")
+    @GetMapping("/{todoId}")
     public ResponseEntity<TodoResponse> getTodo(@PathVariable long todoId) {
         return ResponseEntity.ok(todoService.getTodo(todoId));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<TodoSearchResultDto>> searchTodos(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) LocalDateTime modifiedAt,
+            @RequestParam(required = false) String nickname,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(todoService.searchTodos(page,size,keyword,modifiedAt,nickname));   }
+
 }
