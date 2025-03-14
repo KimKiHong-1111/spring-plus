@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 
-import static org.example.expert.domain.user.enums.UserRole.ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -46,10 +45,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority(UserRole.ADMIN.name())
-                        .requestMatchers("/open").permitAll()
                         .anyRequest().authenticated()
                 );
-
 
         return http.build();
     }

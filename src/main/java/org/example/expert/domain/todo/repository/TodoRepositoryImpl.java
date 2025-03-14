@@ -98,6 +98,7 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
                 .fetchOne();
         return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
+
     private BooleanExpression containKeyword(StringPath path, String keyword) {
         return keyword == null || keyword.isEmpty() ? null : path.contains(keyword);
     }
